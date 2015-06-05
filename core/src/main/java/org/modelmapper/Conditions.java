@@ -53,6 +53,32 @@ public class Conditions {
     }
   };
 
+  private static final Condition<?, ?> IS_DESTINATION_NULL = new AbstractCondition<Object, Object>() {
+    @SuppressWarnings("unused") private static final long serialVersionUID = 0;
+
+    public boolean applies(MappingContext<Object, Object> context) {
+      return context.getDestination() == null;
+    }
+
+    @Override
+    public String toString() {
+      return "isDestinationNull()";
+    }
+  };
+
+  private static final Condition<?, ?> IS_DESTINATION_NOT_NULL = new AbstractCondition<Object, Object>() {
+    @SuppressWarnings("unused") private static final long serialVersionUID = 0;
+
+    public boolean applies(MappingContext<Object, Object> context) {
+      return context.getDestination() != null;
+    }
+
+    @Override
+    public String toString() {
+      return "isDestinationNotNull()";
+    }
+  };
+
   private static class AndCondition<S, D> extends AbstractCondition<S, D> implements Serializable {
     private static final long serialVersionUID = 0;
     private final Condition<S, D> a;
@@ -163,10 +189,24 @@ public class Conditions {
   }
 
   /**
+   * Returns a condition that applies when the mapping destination is not {@code null}.
+   */
+  public static Condition<?, ?> isDestinationNotNull() {
+    return IS_DESTINATION_NOT_NULL;
+  }
+
+  /**
    * Returns a condition that applies when the mapping source is {@code null}.
    */
   public static Condition<?, ?> isNull() {
     return IS_NULL;
+  }
+
+  /**
+   * Returns a condition that applies when the mapping destination is {@code null}.
+   */
+  public static Condition<?, ?> isDestinationNull() {
+    return IS_DESTINATION_NULL;
   }
 
   /**
@@ -176,6 +216,17 @@ public class Conditions {
     return new Condition<Object, Object>() {
       public boolean applies(MappingContext<Object, Object> context) {
         return type.isAssignableFrom(context.getSourceType());
+      }
+    };
+  }
+
+  /**
+   * Returns a condition that applies when the mapping destination is of the type {@code type}.
+   */
+  public static Condition<?, ?> isDestinationType(final Class<?> type) {
+    return new Condition<Object, Object>() {
+      public boolean applies(MappingContext<Object, Object> context) {
+        return type.isAssignableFrom(context.getDestinationType());
       }
     };
   }
